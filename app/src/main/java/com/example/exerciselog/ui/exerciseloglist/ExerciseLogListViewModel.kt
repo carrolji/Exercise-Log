@@ -1,23 +1,21 @@
 package com.example.exerciselog.ui.exerciseloglist
 
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.health.connect.client.HealthConnectFeatures
-import androidx.health.connect.client.feature.ExperimentalFeatureAvailabilityApi
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.exerciselog.data.ExerciseType
+import com.example.exerciselog.data.HealthConnectAvailability
 import com.example.exerciselog.data.HealthConnectManager
 import com.example.exerciselog.domain.ExerciseLog
 import com.example.exerciselog.domain.ExerciseLogRepository
 import com.example.exerciselog.ui.ExerciseLogUIEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -42,23 +40,6 @@ class ExerciseLogListViewModel(
         private set
 
     val permissionsLauncher = healthConnectManager.requestPermissionsActivityContract()
-
-    //    val backgroundReadPermissions = setOf(PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND)
-
-//    var backgroundReadAvailable = mutableStateOf(false)
-//        private set
-
-//    var backgroundReadGranted = mutableStateOf(false)
-//        private set
-
-
-    init {
-        _exerciseLogUiState.update {
-            it.copy(
-                isHealthConnectAvailable = healthConnectManager.availability.value
-            )
-        }
-    }
 
     private fun loadAllExerciseLog() {
         viewModelScope.launch {
@@ -103,7 +84,7 @@ class ExerciseLogListViewModel(
         when (event) {
             ExerciseLogUIEvent.OnCheckPermissions -> {
                 viewModelScope.launch {
-                    checkPermissions()
+                    checkHealthConnectAvailability()
                 }
             }
 
@@ -114,27 +95,17 @@ class ExerciseLogListViewModel(
         }
     }
 
-    private suspend fun checkPermissions() {
-        permissionsGranted.value = healthConnectManager.hasAllPermissions(permissions)
+    private suspend fun checkHealthConnectAvailability() {
+        healthConnectManager.checkAvailability().collectLatest { availability ->
+            Log.d("exerciseLog", "check if health connect app is available: $availability")
+            _exerciseLogUiState.update {
+                it.copy(
+                    isHealthConnectAvailable = availability
+                )
+            }
+            if (availability == HealthConnectAvailability.INSTALLED) {
+                permissionsGranted.value = healthConnectManager.hasAllPermissions(permissions)
+            }
+        }
     }
-
-//    fun initialLoad() {
-//        viewModelScope.launch {
-//            tryWithPermissionsCheck {
-//                //readExerciseSessions()
-//            }
-//        }
-//    }
-//
-//    @OptIn(ExperimentalFeatureAvailabilityApi::class)
-//    private suspend fun tryWithPermissionsCheck(block: suspend () -> Unit) {
-//        permissionsGranted.value = healthConnectManager.hasAllPermissions(permissions)
-////        backgroundReadAvailable.value = healthConnectManager.isFeatureAvailable(
-////            HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_IN_BACKGROUND
-////        )
-////        backgroundReadGranted.value = healthConnectManager.hasAllPermissions(backgroundReadPermissions)
-//        if (permissionsGranted.value) {
-//            block()
-//        }
-//    }
 }

@@ -19,7 +19,6 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.compose.runtime.mutableStateOf
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.HealthConnectClient.Companion.SDK_AVAILABLE
 import androidx.health.connect.client.HealthConnectFeatures
@@ -32,9 +31,7 @@ import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.records.metadata.DataOrigin
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
-import androidx.health.connect.client.units.Mass
 import java.time.Instant
-import java.time.ZonedDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -47,19 +44,13 @@ const val MIN_SUPPORTED_SDK = Build.VERSION_CODES.O_MR1
 class HealthConnectManager(private val context: Context) {
   private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
 
-  var availability = mutableStateOf(HealthConnectAvailability.NOT_SUPPORTED)
-    private set
-
-  init {
-    checkAvailability()
-  }
-
-  fun checkAvailability() {
-    availability.value = when {
+  fun checkAvailability() : Flow<HealthConnectAvailability> = flow {
+    val state = when {
       HealthConnectClient.getSdkStatus(context) == SDK_AVAILABLE -> HealthConnectAvailability.INSTALLED
       isSupported() -> HealthConnectAvailability.NOT_INSTALLED
       else -> HealthConnectAvailability.NOT_SUPPORTED
     }
+    emit(state)
   }
 
   @OptIn(ExperimentalFeatureAvailabilityApi::class)

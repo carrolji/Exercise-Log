@@ -62,13 +62,11 @@ fun ExerciseLogListScreenCore(
 
     val permissionsGranted by viewModel.permissionsGranted
     val permissions = viewModel.permissions
-//    val onPermissionsResult = { viewModel.initialLoad() }
+
     val permissionsLauncher =
         rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-//            onPermissionsResult()
             viewModel.onAction(ExerciseLogUIEvent.OnCheckPermissions)
         }
-
 
     ExerciseLogListScreen(
         permissionsGranted = permissionsGranted,
@@ -106,7 +104,7 @@ fun ExerciseLogListScreen(
                 )
                 HealthConnectComponent(
                     permissionsGranted = permissionsGranted,
-                    state.isHealthConnectAvailable,
+                    healthConnectAvailability = state.isHealthConnectAvailable,
                     onPermissionsLaunch = onLaunchPermissions,
                     onSyncData = onSyncData
                 )
