@@ -16,3 +16,7 @@ sealed interface ExerciseLogDetailUIEvent {
     data class UpdateExerciseStartTime(val hour: Int, val min: Int): ExerciseLogDetailUIEvent
     data object OnSaveNewExercise: ExerciseLogDetailUIEvent
 }
+
+sealed interface SideEffect {
+    data class ShowToast(val message: String) : SideEffect
+}

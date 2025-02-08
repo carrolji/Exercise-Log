@@ -4,7 +4,7 @@ import com.example.exerciselog.data.ExerciseType
 import java.time.ZonedDateTime
 
 data class ExerciseLog(
-    val exerciseId: Long? = null,
+    val exerciseId: String,
     val type: ExerciseType,
     val duration: Long, // in minutes
     val caloriesBurned: Int,

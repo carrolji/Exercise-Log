@@ -1,16 +1,17 @@
 package com.example.exerciselog.data
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
 
 @Dao
 interface ExerciseLogDao {
 
-    @Upsert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertExerciseLog(item: ExerciseLogEntity)
 
-    @Upsert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertExerciseLogs(item: List<ExerciseLogEntity>)
 
     @Query("SELECT * FROM ExerciseLogEntity WHERE id = :id")

@@ -6,5 +6,6 @@ import com.example.exerciselog.domain.ExerciseLog
 data class ExerciseLogUIState(
     val isLoading: Boolean = false,
     val exerciseLogs: List<ExerciseLog> = emptyList(),
-    val isHealthConnectAvailable: HealthConnectAvailability = HealthConnectAvailability.NOT_INSTALLED
+    val exerciseLogsMap: Map<String, List<ExerciseLog>> = emptyMap(),
+    val isHealthConnectAvailable: HealthConnectAvailability = HealthConnectAvailability.NOT_INSTALLED,
 )

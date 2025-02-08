@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-
+import java.util.UUID
 
 class LogNewExerciseViewModel(
     private val exerciseLogRepository: ExerciseLogRepository
@@ -30,6 +30,7 @@ class LogNewExerciseViewModel(
         val durationInMin = state.duration % 60L
         val endTime = state.startTime.plusHours(durationInHour).plusMinutes(durationInMin)
         val newExercise = ExerciseLog(
+            exerciseId = UUID.randomUUID().toString(),
             type = state.type,
             duration = state.duration,
             caloriesBurned = state.caloriesBurned,

@@ -31,4 +31,8 @@ class ExerciseLogRepositoryImpl(
     override suspend fun addExerciseLogs(logs: List<ExerciseLog>) {
         dao.upsertExerciseLogs(logs.map { it.toExerciseLogEntity() })
     }
+
+    override suspend fun deleteExerciseLog(logId: Long) {
+        dao.deleteExerciseLog(logId)
+    }
 }

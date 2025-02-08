@@ -39,6 +39,7 @@ import com.example.exerciselog.ui.theme.GrayLight
 import com.example.exerciselog.utils.formattedMinToTime
 import com.example.exerciselog.utils.getLocalRangeFormat
 import java.time.ZonedDateTime
+import java.util.UUID
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -143,7 +144,7 @@ fun ExerciseInfo(
 @Composable
 fun ExerciseLogItemPreview() {
     val exerciseLog = ExerciseLog(
-        exerciseId = -1,
+        exerciseId = UUID.randomUUID().toString(),
         type = ExerciseType.OTHER_WORKOUT,
         duration = 60,
         caloriesBurned = 100,

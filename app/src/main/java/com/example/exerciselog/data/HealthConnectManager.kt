@@ -99,40 +99,6 @@ class HealthConnectManager(private val context: Context) {
   }
 
   /**
-   * TODO: Reads aggregated data and raw data for selected data types, for a given [ExerciseSessionRecord].
-   */
-//  suspend fun readAssociatedSessionData(
-//      uid: String,
-//  ): ExerciseSessionData {
-//    TODO()
-//  }
-
-  /**
-   * TODO: Obtains a changes token for the specified record types.
-   */
-  suspend fun getChangesToken(): String {
-    Toast.makeText(context, "TODO: get changes token", Toast.LENGTH_SHORT).show()
-    return String()
-  }
-
-  /**
-   * TODO: Retrieve changes from a changes token.
-   */
-  suspend fun getChanges(token: String): Flow<ChangesMessage> = flow {
-    Toast.makeText(context, "TODO: get new changes", Toast.LENGTH_SHORT).show()
-  }
-
-  /**
-   * Enqueue the ReadStepWorker
-   */
-//  fun enqueueReadStepWorker(){
-//    val readRequest = OneTimeWorkRequestBuilder<ReadStepWorker>()
-//      .setInitialDelay(10, TimeUnit.SECONDS)
-//      .build()
-//    WorkManager.getInstance(context).enqueue(readRequest)
-//  }
-
-  /**
    * Convenience function to reuse code for reading data.
    */
   private suspend inline fun <reified T : Record> readData(

@@ -5,7 +5,7 @@ import java.time.Instant
 import java.time.ZoneId
 
 fun ExerciseLogEntity.toModel() : ExerciseLog = ExerciseLog(
-    exerciseId = id,
+    exerciseId = exerciseId,
     type = ExerciseType.valueOf(type),
     duration = duration,
     caloriesBurned = caloriesBurned,
@@ -14,6 +14,7 @@ fun ExerciseLogEntity.toModel() : ExerciseLog = ExerciseLog(
 )
 
 fun ExerciseLog.toExerciseLogEntity() : ExerciseLogEntity = ExerciseLogEntity(
+    exerciseId = exerciseId,
     type = type.name,
     duration = duration,
     caloriesBurned = caloriesBurned,
