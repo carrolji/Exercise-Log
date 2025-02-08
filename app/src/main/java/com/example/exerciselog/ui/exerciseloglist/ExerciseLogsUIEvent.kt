@@ -4,6 +4,7 @@ sealed interface ExerciseLogsUIEvent {
     data object OnCheckPermissions: ExerciseLogsUIEvent
     data object OnLoadExerciseLogs: ExerciseLogsUIEvent
     data object OnSyncExerciseSessions: ExerciseLogsUIEvent
+    data class OnDeleteExerciseLog(val exerciseId: String): ExerciseLogsUIEvent
 }
 
 sealed interface SideEffect {

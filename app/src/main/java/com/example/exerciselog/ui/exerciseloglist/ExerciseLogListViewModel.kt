@@ -131,6 +131,13 @@ class ExerciseLogListViewModel(
             ExerciseLogsUIEvent.OnSyncExerciseSessions -> {
                 syncExerciseSessionFromHealthConnect()
             }
+
+            is ExerciseLogsUIEvent.OnDeleteExerciseLog -> {
+                viewModelScope.launch {
+                    exerciseLogRepository.deleteExerciseLog(event.exerciseId)
+                }
+                loadAllExerciseLog()
+            }
         }
     }
 

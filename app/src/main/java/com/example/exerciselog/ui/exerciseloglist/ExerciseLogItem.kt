@@ -44,7 +44,8 @@ import java.util.UUID
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExerciseLogItem(
-    log: ExerciseLog
+    log: ExerciseLog,
+    onDelete: (exerciseId: String) -> Unit,
 ) {
     var isDropDownOptionShowing by rememberSaveable {
         mutableStateOf(false)
@@ -115,7 +116,10 @@ fun ExerciseLogItem(
         ) {
             DropdownMenuItem(
                 text = { Text(text = stringResource(R.string.delete)) },
-                onClick = {}
+                onClick = {
+                    onDelete(log.exerciseId)
+                    isDropDownOptionShowing = false
+                }
             )
         }
     }
@@ -151,5 +155,5 @@ fun ExerciseLogItemPreview() {
         startTime = ZonedDateTime.now().minusMinutes(30),
         endTime = ZonedDateTime.now()
     )
-    ExerciseLogItem(exerciseLog)
+    ExerciseLogItem(exerciseLog) {}
 }

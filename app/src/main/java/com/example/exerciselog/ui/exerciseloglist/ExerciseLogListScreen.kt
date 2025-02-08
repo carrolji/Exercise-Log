@@ -89,8 +89,8 @@ fun ExerciseLogListScreenCore(
     ExerciseLogListScreen(
         permissionsGranted = permissionsGranted,
         state = uiState,
-        onSyncData = {
-            viewModel.onAction(ExerciseLogsUIEvent.OnSyncExerciseSessions)
+        onAction = { event ->
+            viewModel.onAction(event)
         },
         onLogNewExercise = onLogNewExercise,
         onLaunchPermissions = {
@@ -104,9 +104,9 @@ fun ExerciseLogListScreenCore(
 fun ExerciseLogListScreen(
     permissionsGranted: Boolean,
     state: ExerciseLogUIState,
-    onSyncData: () -> Unit,
     onLogNewExercise: () -> Unit,
     onLaunchPermissions: () -> Unit,
+    onAction: (ExerciseLogsUIEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -123,7 +123,9 @@ fun ExerciseLogListScreen(
                     permissionsGranted = permissionsGranted,
                     healthConnectAvailability = state.isHealthConnectAvailable,
                     onPermissionsLaunch = onLaunchPermissions,
-                    onSyncData = onSyncData
+                    onSyncData = {
+                        onAction(ExerciseLogsUIEvent.OnSyncExerciseSessions)
+                    }
                 )
                 HorizontalDivider(thickness = 1.dp)
             }
@@ -183,7 +185,9 @@ fun ExerciseLogListScreen(
                         }
 
                         items(exerciseLogs) { exerciseLog ->
-                            ExerciseLogItem(log = exerciseLog)
+                            ExerciseLogItem(log = exerciseLog) {
+                                onAction(ExerciseLogsUIEvent.OnDeleteExerciseLog(it))
+                            }
                             Spacer(modifier = Modifier.height(15.dp))
                         }
                     }

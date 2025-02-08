@@ -8,5 +8,5 @@ interface ExerciseLogRepository {
     suspend fun getExerciseLog(logId: Long): ExerciseLog
     suspend fun addExerciseLog(log: ExerciseLog)
     suspend fun addExerciseLogs(logs: List<ExerciseLog>)
-    suspend fun deleteExerciseLog(logId: Long)
+    suspend fun deleteExerciseLog(exerciseId: String)
 }

@@ -32,7 +32,7 @@ class ExerciseLogRepositoryImpl(
         dao.upsertExerciseLogs(logs.map { it.toExerciseLogEntity() })
     }
 
-    override suspend fun deleteExerciseLog(logId: Long) {
-        dao.deleteExerciseLog(logId)
+    override suspend fun deleteExerciseLog(exerciseId: String) {
+        dao.deleteExerciseLog(exerciseId)
     }
 }
