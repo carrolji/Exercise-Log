@@ -20,7 +20,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.exerciselog.data.ExerciseType
-import com.example.exerciselog.ui.ExerciseLogDetailUIEvent
 import com.example.exerciselog.ui.component.DatePickerField
 import com.example.exerciselog.ui.component.DropDownOptions
 import com.example.exerciselog.ui.component.TimePickerInput

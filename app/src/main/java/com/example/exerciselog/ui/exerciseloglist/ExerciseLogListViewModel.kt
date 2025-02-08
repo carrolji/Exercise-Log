@@ -12,8 +12,6 @@ import com.example.exerciselog.data.HealthConnectAvailability
 import com.example.exerciselog.data.HealthConnectManager
 import com.example.exerciselog.domain.ExerciseLog
 import com.example.exerciselog.domain.ExerciseLogRepository
-import com.example.exerciselog.ui.ExerciseLogUIEvent
-import com.example.exerciselog.ui.SideEffect
 import com.example.exerciselog.utils.formatAsDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -121,16 +119,16 @@ class ExerciseLogListViewModel(
         }
     }
 
-    fun onAction(event: ExerciseLogUIEvent) {
+    fun onAction(event: ExerciseLogsUIEvent) {
         when (event) {
-            ExerciseLogUIEvent.OnCheckPermissions -> {
+            ExerciseLogsUIEvent.OnCheckPermissions -> {
                 viewModelScope.launch {
                     checkHealthConnectAvailability()
                 }
             }
 
-            ExerciseLogUIEvent.OnLoadExerciseLogs -> loadAllExerciseLog()
-            ExerciseLogUIEvent.OnSyncExerciseSessions -> {
+            ExerciseLogsUIEvent.OnLoadExerciseLogs -> loadAllExerciseLog()
+            ExerciseLogsUIEvent.OnSyncExerciseSessions -> {
                 syncExerciseSessionFromHealthConnect()
             }
         }

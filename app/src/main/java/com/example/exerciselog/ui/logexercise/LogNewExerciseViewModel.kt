@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.exerciselog.data.ExerciseType
 import com.example.exerciselog.domain.ExerciseLog
 import com.example.exerciselog.domain.ExerciseLogRepository
-import com.example.exerciselog.ui.ExerciseLogDetailUIEvent
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.ZoneId

@@ -41,8 +41,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.exerciselog.R
-import com.example.exerciselog.ui.ExerciseLogUIEvent
-import com.example.exerciselog.ui.SideEffect
 import com.example.exerciselog.ui.theme.PurpleGrey80
 import org.koin.androidx.compose.koinViewModel
 
@@ -55,7 +53,7 @@ fun ExerciseLogListScreenCore(
     val uiState by viewModel.exerciseLogUiState.collectAsState()
     val context = LocalContext.current
     LaunchedEffect(true) {
-        viewModel.onAction(ExerciseLogUIEvent.OnLoadExerciseLogs)
+        viewModel.onAction(ExerciseLogsUIEvent.OnLoadExerciseLogs)
     }
 
     LaunchedEffect(viewModel.sideEffectFlow) {
@@ -71,7 +69,7 @@ fun ExerciseLogListScreenCore(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                viewModel.onAction(ExerciseLogUIEvent.OnCheckPermissions)
+                viewModel.onAction(ExerciseLogsUIEvent.OnCheckPermissions)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -85,14 +83,14 @@ fun ExerciseLogListScreenCore(
 
     val permissionsLauncher =
         rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-            viewModel.onAction(ExerciseLogUIEvent.OnCheckPermissions)
+            viewModel.onAction(ExerciseLogsUIEvent.OnCheckPermissions)
         }
 
     ExerciseLogListScreen(
         permissionsGranted = permissionsGranted,
         state = uiState,
         onSyncData = {
-            viewModel.onAction(ExerciseLogUIEvent.OnSyncExerciseSessions)
+            viewModel.onAction(ExerciseLogsUIEvent.OnSyncExerciseSessions)
         },
         onLogNewExercise = onLogNewExercise,
         onLaunchPermissions = {
