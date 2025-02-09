@@ -37,8 +37,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.exerciselog.R
 import com.example.exerciselog.data.ExerciseType
+import com.example.exerciselog.data.LogType
 import com.example.exerciselog.domain.ExerciseLog
 import com.example.exerciselog.ui.theme.GrayLight
+import com.example.exerciselog.ui.theme.GreenBg
+import com.example.exerciselog.ui.theme.Purple80
 import com.example.exerciselog.ui.theme.RedConflict
 import com.example.exerciselog.ui.theme.RedDark
 import com.example.exerciselog.utils.formattedMinToTime
@@ -56,7 +59,14 @@ fun ExerciseLogItem(
         mutableStateOf(false)
     }
 
-    val conflictColor = if (log.isConflict) RedConflict else GrayLight
+    val conflictColor = if (log.isConflict) {
+        RedConflict
+    } else if (log.logType == LogType.SYNC_DATA) {
+        GreenBg
+    } else if (log.logType == LogType.MANUAL_INPUT) {
+        Purple80
+    } else GrayLight
+
     Box {
         ElevatedCard(
             shape = RoundedCornerShape(22.dp),
@@ -115,13 +125,25 @@ fun ExerciseLogItem(
 
                 if (log.isConflict) {
                     Row(modifier = Modifier.padding(top = 5.dp)) {
-                        Button(onClick = { onActionLogItemAction(ExerciseLogsUIEvent.OnKeepExerciseLog(log.exerciseId)) }) {
+                        Button(onClick = {
+                            onActionLogItemAction(
+                                ExerciseLogsUIEvent.OnKeepExerciseLog(
+                                    log.exerciseId
+                                )
+                            )
+                        }) {
                             Text(text = stringResource(R.string.keep_log))
                         }
                         Button(
                             colors = ButtonDefaults.buttonColors(RedDark),
                             modifier = Modifier.padding(start = 10.dp),
-                            onClick = { onActionLogItemAction(ExerciseLogsUIEvent.OnDeleteExerciseLog(log.exerciseId)) }
+                            onClick = {
+                                onActionLogItemAction(
+                                    ExerciseLogsUIEvent.OnDeleteExerciseLog(
+                                        log.exerciseId
+                                    )
+                                )
+                            }
                         ) {
                             Text(text = stringResource(R.string.delete))
                         }
@@ -175,7 +197,8 @@ fun ExerciseLogItemPreview() {
         caloriesBurned = 100,
         startTime = ZonedDateTime.now().minusMinutes(30),
         endTime = ZonedDateTime.now(),
-        isConflict = true,
+        logType = LogType.SYNC_DATA,
+        isConflict = false,
     )
     ExerciseLogItem(exerciseLog) {}
 }

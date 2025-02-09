@@ -1,12 +1,12 @@
 package com.example.exerciselog.ui.logexercise
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.exerciselog.data.ExerciseType
+import com.example.exerciselog.data.LogType
 import com.example.exerciselog.domain.ExerciseLog
 import com.example.exerciselog.domain.ExerciseLogRepository
 import kotlinx.coroutines.launch
@@ -33,6 +33,7 @@ class LogNewExerciseViewModel(
             caloriesBurned = state.caloriesBurned ?: 0,
             startTime = state.startTime,
             endTime = endTime,
+            logType = LogType.MANUAL_INPUT,
             isConflict = false
         )
         exerciseLogRepository.addExerciseLog(newExercise)
@@ -74,7 +75,6 @@ class LogNewExerciseViewModel(
                     LocalTime.of(event.hour, event.min),
                     ZoneId.systemDefault()
                 )
-                Log.d("YARRR", "date ${state.startTime.toLocalDate()} - ${LocalTime.of(event.hour, event.min)}, $parse")
                 state = state.copy(
                     startTime = parse
                 )

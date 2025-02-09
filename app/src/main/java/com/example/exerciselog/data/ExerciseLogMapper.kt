@@ -11,6 +11,7 @@ fun ExerciseLogEntity.toModel() : ExerciseLog = ExerciseLog(
     caloriesBurned = caloriesBurned,
     startTime = Instant.ofEpochMilli(startTime).atZone(ZoneId.of("UTC")),
     endTime = Instant.ofEpochMilli(endTime).atZone(ZoneId.of("UTC")),
+    logType = LogType.valueOf(logType),
     isConflict = isConflict
 )
 
@@ -21,5 +22,6 @@ fun ExerciseLog.toExerciseLogEntity() : ExerciseLogEntity = ExerciseLogEntity(
     caloriesBurned = caloriesBurned,
     startTime = startTime.toInstant().toEpochMilli(),
     endTime = endTime.toInstant().toEpochMilli(),
+    logType = logType.name,
     isConflict = isConflict
 )

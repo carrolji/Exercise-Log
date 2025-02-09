@@ -14,6 +14,7 @@ import com.example.exerciselog.SyncTimeDataStore
 import com.example.exerciselog.data.ExerciseType
 import com.example.exerciselog.data.HealthConnectAvailability
 import com.example.exerciselog.data.HealthConnectManager
+import com.example.exerciselog.data.LogType
 import com.example.exerciselog.domain.ExerciseLog
 import com.example.exerciselog.domain.ExerciseLogRepository
 import com.example.exerciselog.utils.formatAsDate
@@ -34,14 +35,14 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class ExerciseLogListViewModel(
+class ExerciseLogViewModel(
     private val exerciseLogRepository: ExerciseLogRepository,
     private val healthConnectManager: HealthConnectManager,
     private val syncPreferences: SyncTimeDataStore,
 ) : ViewModel() {
 
-    private val _exerciseLogUiState = MutableStateFlow(ExerciseLogUIState(isLoading = true))
-    val exerciseLogUiState = _exerciseLogUiState.asStateFlow()
+    private val _exerciseLogsUiState = MutableStateFlow(ExerciseLogsUIState(isLoading = true))
+    val exerciseLogUiState = _exerciseLogsUiState.asStateFlow()
 
     private val _sideEffectChannel = Channel<SideEffect>(capacity = Channel.BUFFERED)
     val sideEffectFlow: Flow<SideEffect>
@@ -67,7 +68,7 @@ class ExerciseLogListViewModel(
         val exerciseMap = exerciseRecords.groupBy { log ->
             log.startTime.formatAsDate()
         }
-        _exerciseLogUiState.update {
+        _exerciseLogsUiState.update {
             it.copy(
                 isLoading = false,
                 exerciseLogs = exerciseRecords,
@@ -109,7 +110,7 @@ class ExerciseLogListViewModel(
                 val exerciseMap = updatedLogs.groupBy { log ->
                     log.startTime.formatAsDate()
                 }
-                _exerciseLogUiState.update {
+                _exerciseLogsUiState.update {
                     it.copy(
                         isLoading = false,
                         exerciseLogs = updatedLogs,
@@ -160,14 +161,14 @@ class ExerciseLogListViewModel(
     private suspend fun checkHealthConnectAvailability() {
         healthConnectManager.checkAvailability().collectLatest { availability ->
             Log.d("yarr", "check if health connect app is available: $availability")
-            _exerciseLogUiState.update {
+            _exerciseLogsUiState.update {
                 it.copy(
                     isHealthConnectAvailable = availability
                 )
             }
             if (availability == HealthConnectAvailability.INSTALLED) {
                 val hasAllPermissions = healthConnectManager.hasAllPermissions(permissions)
-                _exerciseLogUiState.update {
+                _exerciseLogsUiState.update {
                     it.copy(
                         permissionGranted = hasAllPermissions
                     )
@@ -256,6 +257,7 @@ class ExerciseLogListViewModel(
                 caloriesBurned = caloriesBurned,
                 startTime = sessionStartTime,
                 endTime = sessionEndTime,
+                logType = LogType.SYNC_DATA,
                 isConflict = false,
             )
         }.toMutableList()

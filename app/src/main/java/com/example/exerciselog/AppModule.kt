@@ -6,7 +6,7 @@ import com.example.exerciselog.data.ExerciseLogDatabase
 import com.example.exerciselog.data.ExerciseLogRepositoryImpl
 import com.example.exerciselog.data.HealthConnectManager
 import com.example.exerciselog.domain.ExerciseLogRepository
-import com.example.exerciselog.ui.exerciseloglist.ExerciseLogListViewModel
+import com.example.exerciselog.ui.exerciseloglist.ExerciseLogViewModel
 import com.example.exerciselog.ui.logexercise.LogNewExerciseViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -42,7 +42,7 @@ val appModule = module {
     }
 
     viewModel {
-        ExerciseLogListViewModel(get(), get(), get())
+        ExerciseLogViewModel(get(), get(), get())
     }
 
     viewModel {

@@ -3,7 +3,7 @@ package com.example.exerciselog.ui.exerciseloglist
 import com.example.exerciselog.data.HealthConnectAvailability
 import com.example.exerciselog.domain.ExerciseLog
 
-data class ExerciseLogUIState(
+data class ExerciseLogsUIState(
     val isLoading: Boolean = false,
     val permissionGranted: Boolean = false,
     val exerciseLogs: List<ExerciseLog> = emptyList(),

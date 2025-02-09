@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.exerciselog.ui.exerciseloglist.ExerciseLogListScreenCore
+import com.example.exerciselog.ui.exerciseloglist.ExerciseLogsScreenCore
 import com.example.exerciselog.ui.logexercise.LogNewExerciseScreenCore
 
 @Composable
@@ -13,7 +13,7 @@ fun NavigationStack() {
 
     NavHost(navController = navController, startDestination = Screen.ExerciseLogScreen.route) {
         composable(route = Screen.ExerciseLogScreen.route) {
-            ExerciseLogListScreenCore {
+            ExerciseLogsScreenCore {
                 navController.navigate(route = Screen.LogNewExerciseScreen.route)
             }
         }

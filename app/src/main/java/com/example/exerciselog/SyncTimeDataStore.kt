@@ -13,7 +13,7 @@ const val PREFERENCES_NAME = "sync_time_preferences"
 class SyncTimeDataStore(private val context: Context) {
     private val Context.dataStore by preferencesDataStore(name = PREFERENCES_NAME)
 
-    val lastSevenDays = ZonedDateTime.now().minusDays(7).toInstant().toEpochMilli()
+    private val lastSevenDays = ZonedDateTime.now().minusDays(7).toInstant().toEpochMilli()
 
     private val LAST_SYNC_KEY = longPreferencesKey("last_sync_time")
 

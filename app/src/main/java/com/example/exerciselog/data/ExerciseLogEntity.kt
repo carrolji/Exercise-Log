@@ -19,5 +19,6 @@ data class ExerciseLogEntity(
     val caloriesBurned: Int,
     val startTime: Long,
     val endTime: Long,
+    val logType: String,
     val isConflict: Boolean = false,
 )

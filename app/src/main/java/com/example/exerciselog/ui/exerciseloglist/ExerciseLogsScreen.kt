@@ -45,9 +45,9 @@ import com.example.exerciselog.ui.theme.PurpleGrey80
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ExerciseLogListScreenCore(
+fun ExerciseLogsScreenCore(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    viewModel: ExerciseLogListViewModel = koinViewModel(),
+    viewModel: ExerciseLogViewModel = koinViewModel(),
     onLogNewExercise: () -> Unit,
 ) {
     val uiState by viewModel.exerciseLogUiState.collectAsState()
@@ -85,7 +85,7 @@ fun ExerciseLogListScreenCore(
             viewModel.onAction(ExerciseLogsUIEvent.OnCheckPermissions)
         }
 
-    ExerciseLogListScreen(
+    ExerciseLogsScreen(
         permissionsGranted = uiState.permissionGranted,
         state = uiState,
         onAction = { event ->
@@ -100,9 +100,9 @@ fun ExerciseLogListScreenCore(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun ExerciseLogListScreen(
+fun ExerciseLogsScreen(
     permissionsGranted: Boolean,
-    state: ExerciseLogUIState,
+    state: ExerciseLogsUIState,
     onLogNewExercise: () -> Unit,
     onLaunchPermissions: () -> Unit,
     onAction: (ExerciseLogsUIEvent) -> Unit,
