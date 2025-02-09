@@ -78,7 +78,6 @@ fun ExerciseLogListScreenCore(
         }
     }
 
-    val permissionsGranted by viewModel.permissionsGranted
     val permissions = viewModel.permissions
 
     val permissionsLauncher =
@@ -87,7 +86,7 @@ fun ExerciseLogListScreenCore(
         }
 
     ExerciseLogListScreen(
-        permissionsGranted = permissionsGranted,
+        permissionsGranted = uiState.permissionGranted,
         state = uiState,
         onAction = { event ->
             viewModel.onAction(event)

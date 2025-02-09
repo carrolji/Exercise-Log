@@ -1,6 +1,5 @@
 package com.example.exerciselog.utils
 
-import android.util.Log
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -23,9 +22,9 @@ fun getLocalRangeFormat(statTime: ZonedDateTime, endTime: ZonedDateTime) : Strin
 }
 
 fun formattedTimeInHourAndMin(hour: Int, minute: Int): String {
-    val formatter = DateTimeFormatter.ofPattern("H:m")
-    val time = LocalTime.of(hour, minute).format(formatter)
-    return "${hour}h ${minute}m"//time
+    return if (hour == 0) {
+        "${minute}m"
+    } else "${hour}h ${minute}m"
 }
 
 fun formattedTime(hour: Int, minute: Int): String {
@@ -54,21 +53,8 @@ fun Long.toZoneDateTime() : ZonedDateTime {
         ZoneOffset.UTC)
 }
 
-fun LocalDateTime.formatAsDate() : String {
-    val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-    return this.format(dateFormatter)
-}
-
 fun ZonedDateTime.formatAsDate() : String {
     val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-    return this.format(dateFormatter)
-}
-
-fun formatMillisToDate(milliSecond: Long) : String {
-    val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-    val dateTime = ZonedDateTime.ofInstant(
-        Instant.ofEpochMilli(milliSecond),
-        ZoneId.systemDefault())
-    return dateTime.format(dateFormatter)
+    return this.toInstant().atZone(ZoneId.systemDefault()).format(dateFormatter)
 }
 

@@ -37,8 +37,12 @@ val appModule = module {
         HealthConnectManager(get())
     }
 
+    single<SyncTimeDataStore> {
+        SyncTimeDataStore(androidApplication())
+    }
+
     viewModel {
-        ExerciseLogListViewModel(get(), get())
+        ExerciseLogListViewModel(get(), get(), get())
     }
 
     viewModel {

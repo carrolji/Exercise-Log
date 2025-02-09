@@ -20,16 +20,17 @@ import android.os.Build
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.HealthConnectClient.Companion.SDK_AVAILABLE
-import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.PermissionController
-import androidx.health.connect.client.feature.ExperimentalFeatureAvailabilityApi
+import androidx.health.connect.client.changes.Change
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
+import androidx.health.connect.client.request.ChangesTokenRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import java.time.Instant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.io.IOException
 
 // The minimum android level that can use Health Connect
 const val MIN_SUPPORTED_SDK = Build.VERSION_CODES.O_MR1
@@ -47,13 +48,6 @@ class HealthConnectManager(private val context: Context) {
       else -> HealthConnectAvailability.NOT_SUPPORTED
     }
     emit(state)
-  }
-
-  @OptIn(ExperimentalFeatureAvailabilityApi::class)
-  fun isFeatureAvailable(feature: Int): Boolean{
-    return healthConnectClient
-      .features
-      .getFeatureStatus(feature) == HealthConnectFeatures.FEATURE_STATUS_AVAILABLE
   }
 
   /**
@@ -96,6 +90,46 @@ class HealthConnectManager(private val context: Context) {
 
   private fun isSupported() = Build.VERSION.SDK_INT >= MIN_SUPPORTED_SDK
 
+  /**
+   * Obtains a changes token for Health Connect Differential Changes API.
+   */
+  suspend fun getChangesToken(): String {
+    return healthConnectClient.getChangesToken(
+      ChangesTokenRequest(
+        setOf(
+          ExerciseSessionRecord::class,
+          TotalCaloriesBurnedRecord::class,
+        )
+      )
+    )
+  }
+
+  /**
+   * Retrieve changes from a changes token.
+   */
+  fun getChanges(token: String): Flow<ChangesMessage> = flow {
+    var nextChangesToken = token
+    do {
+      val response = healthConnectClient.getChanges(nextChangesToken)
+      if (response.changesTokenExpired) {
+        // As described here: https://developer.android.com/guide/health-and-fitness/health-connect/data-and-data-types/differential-changes-api
+        // tokens are only valid for 30 days. It is important to check whether the token has
+        // expired. As well as ensuring there is a fallback to using the token (for example
+        // importing data since a certain date), more importantly, the app should ensure
+        // that the changes API is used sufficiently regularly that tokens do not expire.
+        throw IOException("Changes token has expired")
+      }
+      emit(ChangesMessage.ChangeList(response.changes))
+      nextChangesToken = response.nextChangesToken
+    } while (response.hasMore)
+    emit(ChangesMessage.NoMoreChanges(nextChangesToken))
+  }
+
+  // Represents the two types of messages that can be sent in a Changes flow.
+  sealed class ChangesMessage {
+    data class NoMoreChanges(val nextChangesToken: String) : ChangesMessage()
+    data class ChangeList(val changes: List<Change>) : ChangesMessage()
+  }
 }
 
 /**
