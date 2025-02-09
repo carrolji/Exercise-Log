@@ -28,9 +28,9 @@ android {
             )
         }
     }
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = "1.5.14"
-//    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.13"
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -40,6 +40,13 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            merges += "META-INF/LICENSE.md"
+            merges += "META-INF/LICENSE-notice.md"
+        }
     }
 }
 
@@ -53,23 +60,11 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     //Compose navigation
     implementation(libs.androidx.navigation.compose)
-
-    // Coil
-    implementation(libs.coil)
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
 
     //Room
     implementation(libs.androidx.room.ktx)
@@ -77,11 +72,35 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     //Dependency Injection
     implementation(libs.bundles.koin)
-    testImplementation(libs.koin.test.junit4)
 
     //Extended Icons
     implementation(libs.androidx.material.icons.extended)
 
     //Health Connect API
     implementation(libs.androidx.connect.client)
+
+    //Datastore
+    implementation(libs.androidx.datastore.preferences)
+
+    testImplementation(libs.junit)
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.truth)
+    testImplementation(libs.androidx.core)
+    testImplementation(libs.androidx.core.testing)
+
+    testImplementation (libs.mockito.core)
+    testImplementation (libs.androidx.junit.ktx)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    androidTestImplementation("io.mockk:mockk-android:1.9.2")
+//
+//    implementation(libs.kotlinx.coroutines.core)
+//    implementation(libs.kotlinx.coroutines.android)
+
 }
