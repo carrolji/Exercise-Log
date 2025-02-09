@@ -71,7 +71,6 @@ class ExerciseLogViewModel(
         _exerciseLogsUiState.update {
             it.copy(
                 isLoading = false,
-                exerciseLogs = exerciseRecords,
                 exerciseLogsMap = exerciseMap,
             )
         }
@@ -79,25 +78,19 @@ class ExerciseLogViewModel(
 
     private fun syncExerciseSessionFromHealthConnect() = viewModelScope.launch(Dispatchers.IO) {
         val lastSyncInstant = Instant.ofEpochMilli(syncPreferences.getLastSyncTime())
-        Log.d(
-            "YARRRR",
-            "Last Sync Time: ${
-                syncPreferences.getLastSyncTime().toZoneDateTime().toLocalTimeFormat()
-            }"
-        )
+
         val currentTime = Instant.now()
         val exerciseRecords =
             healthConnectManager.readExerciseSessions(lastSyncInstant, currentTime)
         val caloriesRecords =
             healthConnectManager.readCaloriesBurnedRecord(lastSyncInstant, currentTime)
         val exerciseSyncLogs = combinedExerciseAndCaloriesRecords(exerciseRecords, caloriesRecords)
-        Log.d("YARRRR", "new exercise log list $exerciseSyncLogs")
+
         syncPreferences.saveLastSyncTime(currentTime.toEpochMilli())
 
         //If we've already sync the latest time, check to see if there's any changes incoming
         //Get past updated records before sync time
         getUpdatedHealthConnectRecords(lastSyncInstant).collectLatest { oldLogs ->
-            Log.d("YARRRR", "collect changessss $oldLogs")
             exerciseSyncLogs.addAll(oldLogs)
         }
 
@@ -113,7 +106,6 @@ class ExerciseLogViewModel(
                 _exerciseLogsUiState.update {
                     it.copy(
                         isLoading = false,
-                        exerciseLogs = updatedLogs,
                         exerciseLogsMap = exerciseMap,
                     )
                 }
@@ -160,7 +152,6 @@ class ExerciseLogViewModel(
 
     private suspend fun checkHealthConnectAvailability() {
         healthConnectManager.checkAvailability().collectLatest { availability ->
-            Log.d("yarr", "check if health connect app is available: $availability")
             _exerciseLogsUiState.update {
                 it.copy(
                     isHealthConnectAvailable = availability
@@ -187,13 +178,11 @@ class ExerciseLogViewModel(
             when (message) {
                 is HealthConnectManager.ChangesMessage.ChangeList -> {
                     val newChanges = getChangesInExerciseAndCalories(lastSyncTime, message.changes)
-                    Log.i("YARRRR", "new changes??? $newChanges")
                     newChanges
                 }
 
                 is HealthConnectManager.ChangesMessage.NoMoreChanges -> {
                     changesToken.value = message.nextChangesToken
-                    Log.i("YARRR", "Updating changes token: ${changesToken.value}")
                     emptyList()
                 }
             }
@@ -211,10 +200,7 @@ class ExerciseLogViewModel(
                     is ExerciseSessionRecord -> {
                         val activity = change.record as ExerciseSessionRecord
                         if (activity.startTime < lastSyncTime) {
-                            Log.d("YARRR", "add to list : $activity - ${activity.startTime.atZone(ZoneId.systemDefault()).toLocalTimeFormat()}")
                             exerciseRecords.add(activity)
-                        } else {
-                            Log.d("YARRR", "IGNORE : $activity - ${activity.startTime.atZone(ZoneId.systemDefault()).toLocalTimeFormat()}")
                         }
                     }
 
@@ -230,7 +216,7 @@ class ExerciseLogViewModel(
         return combinedExerciseAndCaloriesRecords(exerciseRecords, caloriesRecords)
     }
 
-    private fun combinedExerciseAndCaloriesRecords(
+    fun combinedExerciseAndCaloriesRecords(
         exerciseRecords: List<ExerciseSessionRecord>,
         caloriesRecords: List<TotalCaloriesBurnedRecord>
     ): MutableList<ExerciseLog> {

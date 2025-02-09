@@ -9,7 +9,7 @@ class ExerciseLogRepositoryImpl(
     private val dao: ExerciseLogDao
 ) : ExerciseLogRepository {
     override suspend fun getAllExerciseLogs(): List<ExerciseLog> {
-        return dao.getAllExerciseLogs().map { it.toModel() }.sortedBy { it.startTime }
+        return dao.getAllExerciseLogs().map { it.toModel() }.sortedByDescending { it.startTime }
     }
 
     override suspend fun addExerciseLog(log: ExerciseLog) {
@@ -29,7 +29,7 @@ class ExerciseLogRepositoryImpl(
             )
         }
         dao.upsertExerciseLogs(records)
-        emit(dao.getAllExerciseLogs().map { it.toModel() }.sortedBy { it.startTime })
+        emit(dao.getAllExerciseLogs().map { it.toModel() }.sortedByDescending { it.startTime })
     }
 
     override suspend fun resolveLogs(exerciseId: String) {

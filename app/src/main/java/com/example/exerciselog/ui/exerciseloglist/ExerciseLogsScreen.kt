@@ -156,7 +156,7 @@ fun ExerciseLogsScreen(
                 ) {
                     CircularProgressIndicator()
                 }
-            } else if (state.exerciseLogs.isEmpty()) {
+            } else if (state.exerciseLogsMap.isEmpty()) {
                 Text(
                     modifier = Modifier.padding(top = 20.dp, start = 5.dp),
                     text = stringResource(R.string.no_exercise_log)
