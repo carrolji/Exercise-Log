@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RunCircle
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -36,6 +39,8 @@ import com.example.exerciselog.R
 import com.example.exerciselog.data.ExerciseType
 import com.example.exerciselog.domain.ExerciseLog
 import com.example.exerciselog.ui.theme.GrayLight
+import com.example.exerciselog.ui.theme.RedConflict
+import com.example.exerciselog.ui.theme.RedDark
 import com.example.exerciselog.utils.formattedMinToTime
 import com.example.exerciselog.utils.getLocalRangeFormat
 import java.time.ZonedDateTime
@@ -45,12 +50,13 @@ import java.util.UUID
 @Composable
 fun ExerciseLogItem(
     log: ExerciseLog,
-    onDelete: (exerciseId: String) -> Unit,
+    onActionLogItemAction: (ExerciseLogsUIEvent) -> Unit,
 ) {
     var isDropDownOptionShowing by rememberSaveable {
         mutableStateOf(false)
     }
 
+    val conflictColor = if (log.isConflict) RedConflict else GrayLight
     Box {
         ElevatedCard(
             shape = RoundedCornerShape(22.dp),
@@ -58,7 +64,7 @@ fun ExerciseLogItem(
                 defaultElevation = 4.dp
             ),
             modifier = Modifier
-                .height(150.dp)
+                .wrapContentHeight()
                 .combinedClickable(
                     onLongClick = {
                         //Drop down item
@@ -72,7 +78,7 @@ fun ExerciseLogItem(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(GrayLight) //TODO: add highlight here
+                    .background(conflictColor)
                     .padding(horizontal = 18.dp, vertical = 12.dp),
             ) {
                 Row(modifier = Modifier.padding(top = 5.dp)) {
@@ -106,6 +112,21 @@ fun ExerciseLogItem(
                     value = log.caloriesBurned.toString(),
                     unit = stringResource(R.string.unit_cal)
                 )
+
+                if (log.isConflict) {
+                    Row(modifier = Modifier.padding(top = 5.dp)) {
+                        Button(onClick = { onActionLogItemAction(ExerciseLogsUIEvent.OnKeepExerciseLog(log.exerciseId)) }) {
+                            Text(text = stringResource(R.string.keep_log))
+                        }
+                        Button(
+                            colors = ButtonDefaults.buttonColors(RedDark),
+                            modifier = Modifier.padding(start = 10.dp),
+                            onClick = { onActionLogItemAction(ExerciseLogsUIEvent.OnDeleteExerciseLog(log.exerciseId)) }
+                        ) {
+                            Text(text = stringResource(R.string.delete))
+                        }
+                    }
+                }
             }
         }
 
@@ -117,7 +138,7 @@ fun ExerciseLogItem(
             DropdownMenuItem(
                 text = { Text(text = stringResource(R.string.delete)) },
                 onClick = {
-                    onDelete(log.exerciseId)
+                    onActionLogItemAction(ExerciseLogsUIEvent.OnDeleteExerciseLog(log.exerciseId))
                     isDropDownOptionShowing = false
                 }
             )
@@ -153,7 +174,8 @@ fun ExerciseLogItemPreview() {
         duration = 60,
         caloriesBurned = 100,
         startTime = ZonedDateTime.now().minusMinutes(30),
-        endTime = ZonedDateTime.now()
+        endTime = ZonedDateTime.now(),
+        isConflict = true,
     )
     ExerciseLogItem(exerciseLog) {}
 }

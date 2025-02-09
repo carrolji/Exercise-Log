@@ -22,8 +22,6 @@ class LogNewExerciseViewModel(
     var state by mutableStateOf(ExerciseLogDetailUIState())
         private set
 
-    val map = mutableMapOf<String, List<String>>()
-
     private fun addExerciseLog() = viewModelScope.launch {
         val durationInHour = state.duration / 60L
         val durationInMin = state.duration % 60L
@@ -35,6 +33,7 @@ class LogNewExerciseViewModel(
             caloriesBurned = state.caloriesBurned,
             startTime = state.startTime,
             endTime = endTime,
+            isConflict = false
         )
         exerciseLogRepository.addExerciseLog(newExercise)
     }

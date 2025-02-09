@@ -12,7 +12,8 @@
 
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
-    <string name="delete">Delete</string>
+    <string name="delete">Delete Log</string>
+    <string name="keep_log">Keep Log</string>
 
     <string name="health_connect_ready">You can now sync exercise data with Health Connect</string>
     <string name="health_connect_not_supported">Health Connect is only supported on Android devices running API level 27 or above.</string>

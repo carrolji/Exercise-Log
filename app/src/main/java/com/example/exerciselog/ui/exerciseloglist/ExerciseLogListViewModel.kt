@@ -56,19 +56,17 @@ class ExerciseLogListViewModel(
         }
     }
 
-    private fun loadAllExerciseLog() {
-        viewModelScope.launch {
-            val exerciseRecords = exerciseLogRepository.getAllExerciseLogs()
-            val exerciseMap = exerciseRecords.groupBy { log ->
-                log.startTime.formatAsDate()
-            }
-            _exerciseLogUiState.update {
-                it.copy(
-                    isLoading = false,
-                    exerciseLogs = exerciseRecords,
-                    exerciseLogsMap = exerciseMap,
-                )
-            }
+    private suspend fun loadAllExerciseLog() {
+        val exerciseRecords = exerciseLogRepository.getAllExerciseLogs()
+        val exerciseMap = exerciseRecords.groupBy { log ->
+            log.startTime.formatAsDate()
+        }
+        _exerciseLogUiState.update {
+            it.copy(
+                isLoading = false,
+                exerciseLogs = exerciseRecords,
+                exerciseLogsMap = exerciseMap,
+            )
         }
     }
 
@@ -81,9 +79,9 @@ class ExerciseLogListViewModel(
             healthConnectManager.readCaloriesBurnedRecord(startOfDay.toInstant(), currentTime)
 
         val caloriesMap = caloriesRecords.associateBy { it.startTime }
-        Log.d("YARRRR", "caloriesRecord $caloriesMap")
+
         val exerciseLogListSync = exerciseRecords.map { session ->
-            Log.d("YARRRR", "session $session")
+            Log.d("YARRRR", "new exercise session $session")
             val startTime = ZonedDateTime.ofInstant(
                 session.startTime,
                 session.startZoneOffset ?: ZoneId.systemDefault()
@@ -104,19 +102,35 @@ class ExerciseLogListViewModel(
                 caloriesBurned = caloriesBurned,
                 startTime = startTime,
                 endTime = endTime,
+                isConflict = false,
             )
         }
         Log.d("YARRRR", "new exercise log list $exerciseLogListSync")
 
-        addLog(exerciseLogListSync)
+        addAndDetectLogsConflict(exerciseLogListSync)
     }
 
-    private fun addLog(logs: List<ExerciseLog>) {
+    private fun addAndDetectLogsConflict(logs: List<ExerciseLog>) {
         viewModelScope.launch {
-            exerciseLogRepository.addExerciseLogs(logs)
-            loadAllExerciseLog()
+            exerciseLogRepository.syncExerciseLogs(logs).collectLatest { updatedLogs ->
+                val exerciseMap = updatedLogs.groupBy { log ->
+                    log.startTime.formatAsDate()
+                }
+                _exerciseLogUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        exerciseLogs = updatedLogs,
+                        exerciseLogsMap = exerciseMap,
+                    )
+                }
+            }
             _sideEffectChannel.send(SideEffect.ShowToast("Sync Successful"))
         }
+    }
+
+    private fun resolveLogsConflict(exerciseId: String) = viewModelScope.launch(Dispatchers.IO) {
+        exerciseLogRepository.resolveLogs(exerciseId)
+        loadAllExerciseLog()
     }
 
     fun onAction(event: ExerciseLogsUIEvent) {
@@ -127,7 +141,11 @@ class ExerciseLogListViewModel(
                 }
             }
 
-            ExerciseLogsUIEvent.OnLoadExerciseLogs -> loadAllExerciseLog()
+            ExerciseLogsUIEvent.OnLoadExerciseLogs -> {
+                viewModelScope.launch {
+                    loadAllExerciseLog()
+                }
+            }
             ExerciseLogsUIEvent.OnSyncExerciseSessions -> {
                 syncExerciseSessionFromHealthConnect()
             }
@@ -135,8 +153,12 @@ class ExerciseLogListViewModel(
             is ExerciseLogsUIEvent.OnDeleteExerciseLog -> {
                 viewModelScope.launch {
                     exerciseLogRepository.deleteExerciseLog(event.exerciseId)
+                    loadAllExerciseLog()
                 }
-                loadAllExerciseLog()
+            }
+
+            is ExerciseLogsUIEvent.OnKeepExerciseLog -> {
+                resolveLogsConflict(event.exerciseId)
             }
         }
     }

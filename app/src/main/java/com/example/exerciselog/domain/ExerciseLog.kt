@@ -10,4 +10,5 @@ data class ExerciseLog(
     val caloriesBurned: Int,
     val startTime: ZonedDateTime, //utc
     val endTime: ZonedDateTime, //utc
+    val isConflict: Boolean,
 )

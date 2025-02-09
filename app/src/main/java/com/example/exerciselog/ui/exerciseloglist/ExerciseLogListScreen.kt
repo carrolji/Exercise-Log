@@ -186,7 +186,7 @@ fun ExerciseLogListScreen(
 
                         items(exerciseLogs) { exerciseLog ->
                             ExerciseLogItem(log = exerciseLog) {
-                                onAction(ExerciseLogsUIEvent.OnDeleteExerciseLog(it))
+                                onAction(it)
                             }
                             Spacer(modifier = Modifier.height(15.dp))
                         }

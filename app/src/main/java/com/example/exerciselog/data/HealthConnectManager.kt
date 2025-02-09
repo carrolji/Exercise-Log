@@ -17,18 +17,14 @@ package com.example.exerciselog.data
 
 import android.content.Context
 import android.os.Build
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.HealthConnectClient.Companion.SDK_AVAILABLE
 import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.PermissionController
-import androidx.health.connect.client.changes.Change
 import androidx.health.connect.client.feature.ExperimentalFeatureAvailabilityApi
 import androidx.health.connect.client.records.ExerciseSessionRecord
-import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
-import androidx.health.connect.client.records.metadata.DataOrigin
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import java.time.Instant
@@ -98,28 +94,8 @@ class HealthConnectManager(private val context: Context) {
     return response.records
   }
 
-  /**
-   * Convenience function to reuse code for reading data.
-   */
-  private suspend inline fun <reified T : Record> readData(
-      timeRangeFilter: TimeRangeFilter,
-      dataOriginFilter: Set<DataOrigin> = setOf(),
-  ): List<T> {
-    val request = ReadRecordsRequest(
-      recordType = T::class,
-      dataOriginFilter = dataOriginFilter,
-      timeRangeFilter = timeRangeFilter
-    )
-    return healthConnectClient.readRecords(request).records
-  }
-
   private fun isSupported() = Build.VERSION.SDK_INT >= MIN_SUPPORTED_SDK
 
-  // Represents the two types of messages that can be sent in a Changes flow.
-  sealed class ChangesMessage {
-    data class NoMoreChanges(val nextChangesToken: String) : ChangesMessage()
-    data class ChangeList(val changes: List<Change>) : ChangesMessage()
-  }
 }
 
 /**
