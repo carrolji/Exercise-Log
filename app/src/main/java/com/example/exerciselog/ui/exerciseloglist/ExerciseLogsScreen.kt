@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.exerciselog.R
 import com.example.exerciselog.ui.theme.PurpleGrey80
+import com.example.exerciselog.utils.TestTags
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -131,6 +133,7 @@ fun ExerciseLogsScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.testTag(TestTags.ADD_EXERCISE_LOG),
                 onClick = { onLogNewExercise() }
             ) {
                 Icon(
@@ -158,7 +161,7 @@ fun ExerciseLogsScreen(
                 }
             } else if (state.exerciseLogsMap.isEmpty()) {
                 Text(
-                    modifier = Modifier.padding(top = 20.dp, start = 5.dp),
+                    modifier = Modifier.padding(top = 20.dp, start = 5.dp).testTag(TestTags.EMPTY_LOG_DESCRIPTION),
                     text = stringResource(R.string.no_exercise_log)
                 )
             } else {

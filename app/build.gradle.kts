@@ -88,7 +88,6 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.androidx.core)
     testImplementation(libs.androidx.core.testing)
-
     testImplementation (libs.mockito.core)
     testImplementation (libs.androidx.junit.ktx)
     testImplementation(libs.kotlinx.coroutines.test)
@@ -97,10 +96,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-
-    androidTestImplementation("io.mockk:mockk-android:1.9.2")
-//
-//    implementation(libs.kotlinx.coroutines.core)
-//    implementation(libs.kotlinx.coroutines.android)
 
 }

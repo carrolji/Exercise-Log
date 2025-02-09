@@ -38,11 +38,6 @@ class LogNewExerciseViewModelTest {
         isConflict = false,
     )
 
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
-
     @Before
     fun setup() {
         viewModel = LogNewExerciseViewModel(mockRepository)

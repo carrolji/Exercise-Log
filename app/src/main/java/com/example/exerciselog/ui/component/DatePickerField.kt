@@ -17,9 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.exerciselog.R
+import com.example.exerciselog.utils.TestTags
 import com.example.exerciselog.utils.getDateInUTC
 import com.example.exerciselog.utils.toZoneDateTime
 import java.time.LocalDate
@@ -59,7 +61,8 @@ fun DatePickerField(
             .padding(vertical = 10.dp)
             .clickable(onClick = {
                 showDialog = true
-            }),
+            })
+            .testTag(TestTags.SELECTING_DATE),
         text = if (displayDateState == null) {
             stringResource(R.string.select_date)
         } else {
@@ -74,6 +77,7 @@ fun DatePickerField(
             },
             confirmButton = {
                 TextButton(
+                    modifier = Modifier.testTag(TestTags.OK_BUTTON),
                     onClick = {
                         showDialog = false
                         val date = datePickerState.selectedDateMillis ?: defaultTimeZone

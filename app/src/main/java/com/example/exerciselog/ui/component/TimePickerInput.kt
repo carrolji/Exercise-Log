@@ -24,11 +24,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.exerciselog.R
+import com.example.exerciselog.utils.TestTags
+import com.example.exerciselog.utils.TestTags.SELECTING_DURATION
+import com.example.exerciselog.utils.TestTags.SELECTING_TIME
 import com.example.exerciselog.utils.formattedTime
 import com.example.exerciselog.utils.formattedTimeInHourAndMin
 
@@ -47,13 +51,15 @@ fun TimePickerInput(
     if (source.collectIsPressedAsState().value) {
         showDialog = true
     }
+    val testTag = if (isDuration) SELECTING_DURATION else SELECTING_TIME
     Column {
         Text(
             modifier = Modifier
                 .padding(10.dp)
                 .clickable(onClick = {
                     showDialog = true
-                }),
+                })
+                .testTag(testTag),
             text = if (timeSelected.isEmpty()) {
                 stringResource(R.string.select_time)
             } else timeSelected,
@@ -98,7 +104,7 @@ fun TimePickerInput(
                                 )
                             }
                             Button(
-                                modifier = Modifier.padding(start = 8.dp),
+                                modifier = Modifier.padding(start = 8.dp).testTag(TestTags.OK_BUTTON),
                                 onClick = {
                                     timeSelected = if (isDuration) {
                                         formattedTimeInHourAndMin(timeState.hour, timeState.minute)
@@ -109,7 +115,7 @@ fun TimePickerInput(
                                     onTimeUpdate(timeState.hour, timeState.minute)
                                 }
                             ) {
-                                Text(text =  stringResource(R.string.ok))
+                                Text(text = stringResource(R.string.ok))
                             }
                         }
                     }

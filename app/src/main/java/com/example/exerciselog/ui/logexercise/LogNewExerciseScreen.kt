@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import com.example.exerciselog.data.ExerciseType
 import com.example.exerciselog.ui.component.DatePickerField
 import com.example.exerciselog.ui.component.DropDownOptions
 import com.example.exerciselog.ui.component.TimePickerInput
+import com.example.exerciselog.utils.TestTags
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -83,7 +85,8 @@ fun LogNewExerciseScreen(
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp),
+                    .padding(vertical = 10.dp)
+                    .testTag(TestTags.CALORIES_TEXT_FIELD),
                 value = if(state.caloriesBurned != null) state.caloriesBurned.toString() else "",
                 label = {
                     Text(text = stringResource(R.string.calories_burned_input))
@@ -129,7 +132,7 @@ fun LogNewExerciseScreen(
 
             Button(
                 enabled = onTimeSelected && onDateSelected && onDurationSelected,
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = 10.dp).testTag(TestTags.SAVE_EXERCISE_LOG),
                 onClick = {
                     onAction(ExerciseLogDetailUIEvent.OnSaveNewExercise)
                     onSave()
