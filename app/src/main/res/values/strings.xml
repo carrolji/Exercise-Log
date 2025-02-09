@@ -6,7 +6,7 @@
 
     <string name="duration">Duration</string>
     <string name="calories_burned">Calories Burned</string>
-    <string name="unit_cal">Cal</string>
+    <string name="unit_cal">kCal</string>
     <string name="exercise_log">Exercise Log</string>
     <string name="no_exercise_log">No Exercise Log Created</string>
 
@@ -14,6 +14,7 @@
     <string name="cancel">CANCEL</string>
     <string name="delete">Delete Log</string>
     <string name="keep_log">Keep Log</string>
+    <string name="save">Save</string>
 
     <string name="health_connect_ready">You can now sync exercise data with Health Connect</string>
     <string name="health_connect_not_supported">Health Connect is only supported on Android devices running API level 27 or above.</string>
@@ -21,4 +22,10 @@
     <string name="sync_data">Sync Data From Health Connect</string>
     <string name="permissions_required">App permissions are required to sync data from Health Connect</string>
     <string name="request_permissions">Request Permissions</string>
+
+    <string name="new_exercise_title">New Exercise Log</string>
+    <string name="duration_input">Duration: </string>
+    <string name="start_time_input">Start Time:</string>
+    <string name="calories_burned_input">Calories Burned in kCal</string>
+    <string name="exercise_type_input">Exercise Type</string>
 </resources>

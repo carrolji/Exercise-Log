@@ -30,7 +30,7 @@ class LogNewExerciseViewModel(
             exerciseId = UUID.randomUUID().toString(),
             type = state.type,
             duration = state.duration,
-            caloriesBurned = state.caloriesBurned,
+            caloriesBurned = state.caloriesBurned ?: 0,
             startTime = state.startTime,
             endTime = endTime,
             isConflict = false

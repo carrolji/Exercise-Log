@@ -15,10 +15,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.exerciselog.R
 import com.example.exerciselog.data.ExerciseType
 import com.example.exerciselog.ui.component.DatePickerField
 import com.example.exerciselog.ui.component.DropDownOptions
@@ -44,12 +50,15 @@ fun LogNewExerciseScreen(
     onAction: (ExerciseLogDetailUIEvent) -> Unit,
     onSave: () -> Unit,
 ) {
+    var onDateSelected by remember { mutableStateOf(false) }
+    var onTimeSelected by remember { mutableStateOf(false) }
+    var onDurationSelected by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "New Exercise Log",
+                        text = stringResource(R.string.new_exercise_title),
                         fontSize = 25.sp
                     )
                 }
@@ -65,7 +74,7 @@ fun LogNewExerciseScreen(
             Spacer(modifier = Modifier.height(20.dp))
             DropDownOptions(
                 options = ExerciseType.entries.toList(),
-                label = "Exercise Type",
+                label = stringResource(R.string.exercise_type_input),
                 selectedValue = state.type.name,
                 onValueChangedEvent = {
                     onAction(ExerciseLogDetailUIEvent.UpdateExerciseType(it))
@@ -75,28 +84,34 @@ fun LogNewExerciseScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp),
-                value = state.caloriesBurned.toString(),
+                value = if(state.caloriesBurned != null) state.caloriesBurned.toString() else "",
                 label = {
-                    Text(text = "Calories Burned in Cal")
+                    Text(text = stringResource(R.string.calories_burned_input))
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
                 onValueChange = {
-                    onAction(ExerciseLogDetailUIEvent.UpdateExerciseCalories(it.toIntOrNull() ?: 0))
+                    if(it != "") {
+                        onAction(ExerciseLogDetailUIEvent.UpdateExerciseCalories(it.toInt()))
+                    } else {
+                        onAction(ExerciseLogDetailUIEvent.UpdateExerciseCalories(null))
+                    }
                 }
             )
             Row {
                 Text(
                     modifier = Modifier.padding(top = 10.dp, end = 10.dp),
-                    text = "Start Time: "
+                    text = stringResource(R.string.start_time_input)
                 )
                 DatePickerField {
+                    onDateSelected = true
                     onAction(ExerciseLogDetailUIEvent.UpdateExerciseDate(it))
                 }
                 TimePickerInput(
                     isDuration = false
                 ) { hour, min ->
+                    onTimeSelected = true
                     onAction(ExerciseLogDetailUIEvent.UpdateExerciseStartTime(hour, min))
                 }
             }
@@ -104,21 +119,23 @@ fun LogNewExerciseScreen(
             Row {
                 Text(
                     modifier = Modifier.padding(top = 10.dp, end = 10.dp),
-                    text = "Duration: "
+                    text = stringResource(R.string.duration_input)
                 )
                 TimePickerInput { hour, min ->
+                    onDurationSelected = true
                     onAction(ExerciseLogDetailUIEvent.UpdateExerciseDuration(hour, min))
                 }
             }
 
             Button(
+                enabled = onTimeSelected && onDateSelected && onDurationSelected,
                 modifier = Modifier.padding(top = 10.dp),
                 onClick = {
                     onAction(ExerciseLogDetailUIEvent.OnSaveNewExercise)
                     onSave()
                 }
             ) {
-                Text(text = "Save")
+                Text(text = stringResource(R.string.save))
             }
         }
     }

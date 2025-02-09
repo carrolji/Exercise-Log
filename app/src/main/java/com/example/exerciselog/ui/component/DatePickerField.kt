@@ -51,19 +51,21 @@ fun DatePickerField(
     val datePickerState = rememberDatePickerState(
         selectableDates = PastOrPresentSelectableDates
     )
+    var displayDateState by remember { mutableStateOf<Long?>(null) }
     var showDialog by remember { mutableStateOf(false) }
+    val defaultTimeZone = LocalDateTime.now().atZone(ZoneOffset.UTC).toInstant().toEpochMilli()
     Text(
         modifier = Modifier
             .padding(vertical = 10.dp)
             .clickable(onClick = {
                 showDialog = true
             }),
-        text = if (datePickerState.selectedDateMillis == null) {
+        text = if (displayDateState == null) {
             stringResource(R.string.select_date)
         } else {
-            getDateInUTC(datePickerState.selectedDateMillis!!)
+            getDateInUTC(displayDateState ?: defaultTimeZone)
         },
-        color = if (datePickerState.selectedDateMillis == null) Color.Blue else Color.Black
+        color = if (displayDateState == null) Color.Blue else Color.Black
     )
     if (showDialog) {
         DatePickerDialog(
@@ -74,7 +76,9 @@ fun DatePickerField(
                 TextButton(
                     onClick = {
                         showDialog = false
-                        onDateUpdate(datePickerState.selectedDateMillis!!.toZoneDateTime())
+                        val date = datePickerState.selectedDateMillis ?: defaultTimeZone
+                        displayDateState = date
+                        onDateUpdate(date.toZoneDateTime())
                     }
                 ) {
                     Text(stringResource(R.string.ok))
