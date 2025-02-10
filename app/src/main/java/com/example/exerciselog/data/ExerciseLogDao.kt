@@ -13,9 +13,6 @@ interface ExerciseLogDao {
     @Upsert
     suspend fun upsertExerciseLogs(item: List<ExerciseLogEntity>)
 
-    @Query("SELECT * FROM ExerciseLogEntity WHERE exerciseId = :exerciseId")
-    suspend fun getExerciseLogById(exerciseId: String): ExerciseLogEntity
-
     @Query("SELECT * FROM ExerciseLogEntity")
     suspend fun getAllExerciseLogs(): List<ExerciseLogEntity>
 
@@ -23,15 +20,9 @@ interface ExerciseLogDao {
     suspend fun deleteExerciseLog(exerciseId: String)
 
     @Query(
-        "SELECT * \n" +
-            "FROM ExerciseLogEntity a\n" +
-            "JOIN (SELECT type, startTime, COUNT(*)\n" +
-            "FROM ExerciseLogEntity \n" +
-            "GROUP BY type, startTime\n" +
-            "HAVING count(*) > 1 ) b\n" +
-            "ON a.type = b.type\n" +
-            "AND a.startTime = b.startTime\n" +
-            "ORDER BY startTime"
+        "SELECT *\n" +
+        "FROM ExerciseLogEntity a, ExerciseLogEntity b\n" +
+        "WHERE a.startTime < b.endTime AND a.endTime > b.startTime AND a.type = b.type AND a.exerciseId <> b.exerciseId"
     )
     suspend fun findConflictLogs(): List<ExerciseLogEntity>
 

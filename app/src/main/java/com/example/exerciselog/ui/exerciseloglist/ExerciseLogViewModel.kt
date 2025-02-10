@@ -18,8 +18,6 @@ import com.example.exerciselog.data.LogType
 import com.example.exerciselog.domain.ExerciseLog
 import com.example.exerciselog.domain.ExerciseLogRepository
 import com.example.exerciselog.utils.formatAsDate
-import com.example.exerciselog.utils.toLocalTimeFormat
-import com.example.exerciselog.utils.toZoneDateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -87,14 +85,14 @@ class ExerciseLogViewModel(
         val exerciseSyncLogs = combinedExerciseAndCaloriesRecords(exerciseRecords, caloriesRecords)
 
         syncPreferences.saveLastSyncTime(currentTime.toEpochMilli())
-
         //If we've already sync the latest time, check to see if there's any changes incoming
         //Get past updated records before sync time
-        getUpdatedHealthConnectRecords(lastSyncInstant).collectLatest { oldLogs ->
+        getUpdatedHealthConnectRecords(lastSyncInstant).collect { oldLogs ->
             exerciseSyncLogs.addAll(oldLogs)
         }
 
-        addAndDetectLogsConflict(exerciseSyncLogs)
+        if (exerciseSyncLogs.isNotEmpty()) addAndDetectLogsConflict(exerciseSyncLogs)
+        _sideEffectChannel.send(SideEffect.ShowToast("Sync Successful"))
     }
 
     private fun addAndDetectLogsConflict(logs: List<ExerciseLog>) {
@@ -110,7 +108,6 @@ class ExerciseLogViewModel(
                     )
                 }
             }
-            _sideEffectChannel.send(SideEffect.ShowToast("Sync Successful"))
         }
     }
 
@@ -166,7 +163,7 @@ class ExerciseLogViewModel(
                 }
                 if (hasAllPermissions && changesToken.value == null) {
                     changesToken.value = healthConnectManager.getChangesToken()
-                } else if(!hasAllPermissions) {
+                } else if (!hasAllPermissions) {
                     changesToken.value = null
                 }
             }
@@ -226,11 +223,11 @@ class ExerciseLogViewModel(
             val sessionStartTime = ZonedDateTime.ofInstant(
                 session.startTime,
                 session.startZoneOffset ?: ZoneId.systemDefault()
-            )
+            ).withSecond(0).withNano(0)
             val sessionEndTime = ZonedDateTime.ofInstant(
                 session.endTime,
                 session.endZoneOffset ?: ZoneId.systemDefault()
-            )
+            ).withSecond(0).withNano(0)
             val duration = Duration.between(sessionStartTime, sessionEndTime).toMinutes()
             val exerciseType = ExerciseType.entries.firstOrNull { it.value == session.exerciseType }
                 ?: ExerciseType.OTHER_WORKOUT

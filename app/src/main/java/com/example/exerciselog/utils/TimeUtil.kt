@@ -8,11 +8,6 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-fun ZonedDateTime.toLocalTimeFormat() : String {
-    val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy - h:mm a")
-    return this.toInstant().atZone(ZoneId.systemDefault()).format(formatter)
-}
-
 fun getLocalRangeFormat(statTime: ZonedDateTime, endTime: ZonedDateTime) : String {
     val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy | h:mm a")
     val formatter = DateTimeFormatter.ofPattern("h:mm a")
