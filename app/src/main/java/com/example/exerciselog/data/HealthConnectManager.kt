@@ -35,9 +35,6 @@ import java.io.IOException
 // The minimum android level that can use Health Connect
 const val MIN_SUPPORTED_SDK = Build.VERSION_CODES.O_MR1
 
-/**
- * Demonstrates reading and writing from Health Connect.
- */
 class HealthConnectManager(private val context: Context) {
   private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
 
@@ -50,12 +47,6 @@ class HealthConnectManager(private val context: Context) {
     emit(state)
   }
 
-  /**
-   * Determines whether all the specified permissions are already granted. It is recommended to
-   * call [PermissionController.getGrantedPermissions] first in the permissions flow, as if the
-   * permissions are already granted then there is no need to request permissions via
-   * [PermissionController.createRequestPermissionResultContract].
-   */
   suspend fun hasAllPermissions(permissions: Set<String>): Boolean {
     return healthConnectClient.permissionController.getGrantedPermissions().containsAll(permissions)
   }
@@ -64,9 +55,6 @@ class HealthConnectManager(private val context: Context) {
     return PermissionController.createRequestPermissionResultContract()
   }
 
-  /**
-   * Obtains a list of [ExerciseSessionRecord]s in a specified time frame.
-   */
   suspend fun readExerciseSessions(start: Instant, end: Instant): List<ExerciseSessionRecord> {
     val request = ReadRecordsRequest(
       recordType = ExerciseSessionRecord::class,
@@ -76,9 +64,6 @@ class HealthConnectManager(private val context: Context) {
     return response.records
   }
 
-  /**
-   * Obtains a list of [ExerciseSessionRecord]s in a specified time frame.
-   */
   suspend fun readCaloriesBurnedRecord(start: Instant, end: Instant): List<TotalCaloriesBurnedRecord> {
     val request = ReadRecordsRequest(
       recordType = TotalCaloriesBurnedRecord::class,
@@ -112,11 +97,6 @@ class HealthConnectManager(private val context: Context) {
     do {
       val response = healthConnectClient.getChanges(nextChangesToken)
       if (response.changesTokenExpired) {
-        // As described here: https://developer.android.com/guide/health-and-fitness/health-connect/data-and-data-types/differential-changes-api
-        // tokens are only valid for 30 days. It is important to check whether the token has
-        // expired. As well as ensuring there is a fallback to using the token (for example
-        // importing data since a certain date), more importantly, the app should ensure
-        // that the changes API is used sufficiently regularly that tokens do not expire.
         throw IOException("Changes token has expired")
       }
       emit(ChangesMessage.ChangeList(response.changes))
@@ -132,12 +112,6 @@ class HealthConnectManager(private val context: Context) {
   }
 }
 
-/**
- * Health Connect requires that the underlying Health Connect APK is installed on the device.
- * [HealthConnectAvailability] represents whether this APK is indeed installed, whether it is not
- * installed but supported on the device, or whether the device is not supported (based on Android
- * version).
- */
 enum class HealthConnectAvailability {
   INSTALLED,
   NOT_INSTALLED,
